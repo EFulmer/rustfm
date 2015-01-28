@@ -1,0 +1,5 @@
+[package]
+
+name = "rustfm"
+version = "0.0.1"
+authors = ["Eric Fulmer <EFulmer@gmail.com>"]
