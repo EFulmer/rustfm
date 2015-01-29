@@ -1,20 +1,19 @@
 extern crate hyper;
 
 use self::hyper::Client;
-
 use std::old_io::{BufferedReader, File};
 
 static API_ROOT: &'static str = "http://ws.audioscrobbler.com:80";
 
 // TODO make this into a lastfm struct, containing some sort of ocnnection object & both keys
 
-pub struct Keys {
+struct Keys {
     api: String,
     secret: String,
 }
 
 impl Keys {
-    pub fn new(key_file: &Path) -> Keys {
+    fn new(key_file: &Path) -> Keys {
         let file = match File::open(key_file) {
             Ok(f) => f,
             Err(e) => panic!("error encountered opening api keys file: {:?}", e),
