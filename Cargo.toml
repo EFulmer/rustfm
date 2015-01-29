@@ -3,3 +3,8 @@
 name = "rustfm"
 version = "0.0.1"
 authors = ["Eric Fulmer <EFulmer@gmail.com>"]
+repository = "https://github.com/EFulmer/rustfm"
+keywords = ["lastfm", "last.fm", "audioscrobbler"]
+
+[dependencies]
+hyper = "0.1.9"
