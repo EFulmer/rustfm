@@ -31,13 +31,25 @@ impl Keys {
 
 pub mod artist {
     use super::hyper::Client;
-    use super::Keys;
-    use super::*;
+    use super::{Keys, API_ROOT};
+    use std::collections::HashMap;
 
+    fn build_url(method: &str, params: HashMap<&str, &str>) -> String {
+        let mut url = format!("{root}?method={method}", 
+                              root=super::API_ROOT, method=method);
+        for (k,v) in params.iter() {
+            url = url + &format!("&{k}={v}", k=k, v=v)[];
+        }
+        url
+    }
 
     pub fn get_info(keys: Keys, artist: &str) -> String {
-        let url = format!("{root}?method=artist.getinfo&artist={artist}&api_key={key}&format=json", 
-                          root=super::API_ROOT, artist=artist, key=keys.api);
+        let mut params = HashMap::new();
+        params.insert("artist", &artist[]);
+        params.insert("format", "json");
+        params.insert("api_key", &keys.api[]);
+
+        let url = build_url("artist.getinfo", params);
     
         let mut client = Client::new();
         let mut res = client.get(url.as_slice()).send().unwrap();
@@ -46,8 +58,12 @@ pub mod artist {
     }
 
     pub fn get_similar(keys: Keys, artist: &str) -> String {
-        let url = format!("{root}?method=artist.getsimilar&artist={artist}&api_key={key}&format=json", 
-                          root=super::API_ROOT, artist=artist, key=keys.api);
+        let mut params = HashMap::new();
+        params.insert("artist", &artist[]);
+        params.insert("format", "json");
+        params.insert("api_key", &keys.api[]);
+
+        let url = build_url("artist.getsimilar", params);
     
         let mut client = Client::new();
         let mut res = client.get(url.as_slice()).send().unwrap();
