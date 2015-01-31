@@ -3,7 +3,7 @@ extern crate hyper;
 use self::hyper::Client;
 use std::old_io::{BufferedReader, File};
 
-static API_ROOT: &'static str = "http://ws.audioscrobbler.com:80";
+static API_ROOT: &'static str = "http://ws.audioscrobbler.com/2.0";
 
 struct Keys {
     api: String,
@@ -29,22 +29,23 @@ impl Keys {
     }
 }
 
-fn artist_get_info(keys: Keys, artist: &str) -> () {
+fn artist_get_info(keys: Keys, artist: &str) -> String {
+    let url = format!("{root}?method=artist.getinfo&artist={artist}&api_key={key}&format=json", 
+                      root=API_ROOT, artist=artist, key=keys.api);
+
     let mut client = Client::new();
-
-    let url = format!("http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist={}&api_key={}&format=json", artist, keys.api);
-
     let mut res = client.get(url.as_slice()).send().unwrap();
 
-    println!("{:?}", res.status);
-    println!("{:?}", res.read_to_string().unwrap());
+    res.read_to_string().unwrap()
 }
 
 #[test]
 fn test_artist_get_info() {
     let keys = Keys::from_file(&Path::new("src/etc/keys.txt"));
 
-    artist_get_info(keys, "oasis");
+    let info = artist_get_info(keys, "Oasis");
+    println!("{}", info);
 
-    assert!(true);
+    // sort of basic and dumb right now
+    assert!(&info[].contains("Oasis"));
 }
