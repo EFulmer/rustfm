@@ -29,23 +29,51 @@ impl Keys {
     }
 }
 
-fn artist_get_info(keys: Keys, artist: &str) -> String {
-    let url = format!("{root}?method=artist.getinfo&artist={artist}&api_key={key}&format=json", 
-                      root=API_ROOT, artist=artist, key=keys.api);
+pub mod artist {
+    use super::hyper::Client;
+    use super::Keys;
+    use super::*;
 
-    let mut client = Client::new();
-    let mut res = client.get(url.as_slice()).send().unwrap();
 
-    res.read_to_string().unwrap()
+    pub fn get_info(keys: Keys, artist: &str) -> String {
+        let url = format!("{root}?method=artist.getinfo&artist={artist}&api_key={key}&format=json", 
+                          root=super::API_ROOT, artist=artist, key=keys.api);
+    
+        let mut client = Client::new();
+        let mut res = client.get(url.as_slice()).send().unwrap();
+    
+        res.read_to_string().unwrap()
+    }
+
+    pub fn get_similar(keys: Keys, artist: &str) -> String {
+        let url = format!("{root}?method=artist.getsimilar&artist={artist}&api_key={key}&format=json", 
+                          root=super::API_ROOT, artist=artist, key=keys.api);
+    
+        let mut client = Client::new();
+        let mut res = client.get(url.as_slice()).send().unwrap();
+    
+        res.read_to_string().unwrap()
+    }
 }
 
 #[test]
 fn test_artist_get_info() {
     let keys = Keys::from_file(&Path::new("src/etc/keys.txt"));
 
-    let info = artist_get_info(keys, "Oasis");
-    println!("{}", info);
+    let info = artist::get_info(keys, "Oasis");
+    println!("{}", info); // cargo test -- --nocapture to print out
 
     // sort of basic and dumb right now
     assert!(&info[].contains("Oasis"));
+}
+
+#[test]
+fn test_artist_get_similar() {
+    let keys = Keys::from_file(&Path::new("src/etc/keys.txt"));
+
+    let info = artist::get_similar(keys, "Oasis");
+    println!("{}", info);
+
+    // sort of basic and dumb right now
+    assert!(&info[].contains("Blur"));
 }
